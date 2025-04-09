@@ -4,6 +4,7 @@ import NotificationSettings from "../components/NotificationSettings";
 import UserList from "../components/UserList";
 import CategoryList from "../components/CategoryList";
 import CustomReplies from "../components/CustomReplies";
+import { useDebounce } from "../hooks/useDebounce";
 
 const SettingsPage: React.FC = () => {
   const [notificationsEnabled, setNotificationsEnabled] =
@@ -44,12 +45,10 @@ const SettingsPage: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      saveSettings();
-    }, 1000);
+  const debouncedSaveSettings = useDebounce(saveSettings, 1000);
 
-    return () => clearTimeout(timeoutId);
+  useEffect(() => {
+    debouncedSaveSettings();
   }, [notificationsEnabled, users, categories, customReplies]);
 
   return (
